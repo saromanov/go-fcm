@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -18,6 +17,7 @@ type Notification struct {
 }
 
 // SendBody provides sending of the request to Google FCM
+// More details on https://firebase.google.com/docs/cloud-messaging/http-server-ref
 type SendBody struct {
 	Notification Notification `json:"notification,omitempty"`
 	// To represents a fcm token to device
@@ -25,6 +25,19 @@ type SendBody struct {
 
 	//Message with payload — data message
 	Data interface{} `json:"data,omitempty"`
+}
+
+// Response provides output data after sending to
+// google FCM. More details on https://firebase.google.com/docs/cloud-messaging/http-server-ref#interpret-downstream
+type Response struct {
+	MulticastID string `json:"multicast_id"`
+	Success     int    `json:"success"`
+	Failure     int    `json:"failure"`
+	Results []Result `json:"results"`
+}
+
+type Result struct {
+	
 }
 
 // App defines main definition for the app
@@ -56,14 +69,18 @@ func (a *App) Send(s *SendBody) error {
 			panic(fmt.Errorf("unable to close response body: %v", errC))
 		}
 	}()
-	body, err := ioutil.ReadAll(resp)
+	decoder := json.NewDecoder(resp)
+	err = decoder.Decode(&posting)
 	if err != nil {
-		return fmt.Errorf("unable to read body: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		jsonapi.WriteBasicError(w, "400", err.Error(), "")
+		return
 	}
 
 	return nil
 }
 
+// sending of POST HTTP request
 func (a *App) sendRequest(b []byte) (io.ReadCloser, error) {
 	req, err := http.NewRequest("POST", fcmURL, bytes.NewBuffer(b))
 	if err != nil {
