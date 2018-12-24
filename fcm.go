@@ -30,17 +30,17 @@ type SendBody struct {
 // Response provides output data after sending to
 // google FCM. More details on https://firebase.google.com/docs/cloud-messaging/http-server-ref#interpret-downstream
 type Response struct {
-	MulticastID string `json:"multicast_id"`
-	Success     int    `json:"success"`
-	Failure     int    `json:"failure"`
-	Results []Result `json:"results"`
+	MulticastID string   `json:"multicast_id"`
+	Success     int      `json:"success"`
+	Failure     int      `json:"failure"`
+	Results     []Result `json:"results"`
 }
 
 // Result defines result data after response
 type Result struct {
-	MessageID string `json:"message_id"`
+	MessageID      string `json:"message_id"`
 	RegistrationID string `json:"registration_id"`
-	Error string `json:"error"`
+	Error          string `json:"error"`
 }
 
 // App defines main definition for the app
@@ -56,15 +56,15 @@ func New(serverKey string) *App {
 }
 
 // Send provides creating of the message to FCM
-func (a *App) Send(s *SendBody) error {
+func (a *App) Send(s *SendBody) (*Response, error) {
 	marshalled, err := json.Marshal(s)
 	if err != nil {
-		return fmt.Errorf("unable to marshal body: %v", err)
+		return nil, fmt.Errorf("unable to marshal body: %v", err)
 	}
 
 	resp, err := a.sendRequest(marshalled)
 	if err != nil {
-		return fmt.Errorf("unable to send request: %v", err)
+		return nil, fmt.Errorf("unable to send request: %v", err)
 	}
 	defer func() {
 		errC := resp.Close()
@@ -72,15 +72,7 @@ func (a *App) Send(s *SendBody) error {
 			panic(fmt.Errorf("unable to close response body: %v", errC))
 		}
 	}()
-	decoder := json.NewDecoder(resp)
-	err = decoder.Decode(&posting)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		jsonapi.WriteBasicError(w, "400", err.Error(), "")
-		return
-	}
-
-	return nil
+	return a.getResponse(resp)
 }
 
 // sending of POST HTTP request
@@ -99,5 +91,15 @@ func (a *App) sendRequest(b []byte) (io.ReadCloser, error) {
 	}
 
 	result := resp.Body
+	return result, nil
+}
+
+func (a *App) getResponse(resp io.ReadCloser) (*Response, error) {
+	var result *Response
+	decoder := json.NewDecoder(resp)
+	err := decoder.Decode(&result)
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode response: %v", err)
+	}
 	return result, nil
 }
