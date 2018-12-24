@@ -25,6 +25,15 @@ type SendBody struct {
 
 	//Message with payload — data message
 	Data interface{} `json:"data,omitempty"`
+
+	Condition             string `json:"condition,omitempty"`
+	CollapseKey           string `json:"collapse_key,omitempty"`
+	Priority              string `json:"priority,omitempty"`
+	ContentAvailable      bool   `json:"content_available,omitempty"`
+	MutableContent        string `json:"mutable_content,omitempty"`
+	TimeToLive            int    `json:"time_to_live,omitempty"`
+	RestrictedPackageName string `json:"restricted_package_name,omitempty"`
+	DryRun                bool   `json:"dry_run,omitempty"`
 }
 
 // Response provides output data after sending to
