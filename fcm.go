@@ -36,8 +36,11 @@ type Response struct {
 	Results []Result `json:"results"`
 }
 
+// Result defines result data after response
 type Result struct {
-	
+	MessageID string `json:"message_id"`
+	RegistrationID string `json:"registration_id"`
+	Error string `json:"error"`
 }
 
 // App defines main definition for the app
