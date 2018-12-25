@@ -103,6 +103,7 @@ func (a *App) sendRequest(b []byte) (io.ReadCloser, error) {
 	return result, nil
 }
 
+// getResponse returns response after sending request to FCM API
 func (a *App) getResponse(resp io.ReadCloser) (*Response, error) {
 	var result *Response
 	decoder := json.NewDecoder(resp)
