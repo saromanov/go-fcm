@@ -39,7 +39,7 @@ type SendBody struct {
 // Response provides output data after sending to
 // google FCM. More details on https://firebase.google.com/docs/cloud-messaging/http-server-ref#interpret-downstream
 type Response struct {
-	MulticastID string   `json:"multicast_id"`
+	MulticastID int64    `json:"multicast_id"`
 	Success     int      `json:"success"`
 	Failure     int      `json:"failure"`
 	Results     []Result `json:"results"`
