@@ -90,7 +90,7 @@ func (a *App) sendRequest(b []byte) (io.ReadCloser, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Authorization", fmt.Sprintf("key=%s", "AAAAeOL9fKw:APA91bGTKBt7u_ftzsfWtp6yQKphudPlryQ1ufsLh09Q1UPNg0R5tuHJDNsCOYlaktxTurM03ufSFZNzIFJLLB6SjQd3A0SUlBTqlamwsLJEcRhj09Q7VPiZx6PL9pdhIXTCyB1jOXhq"))
+	req.Header.Set("Authorization", fmt.Sprintf("key=%s", a.serverKey))
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
