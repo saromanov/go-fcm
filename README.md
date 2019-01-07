@@ -1,4 +1,5 @@
 # Go-fcm
+[![Go Report Card](https://goreportcard.com/badge/github.com/saromanov/go-fcm)](https://goreportcard.com/report/github.com/saromanov/go-fcm)
 
 Implementation of Google Cloud Messaging API
 
