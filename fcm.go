@@ -74,7 +74,7 @@ func (a *App) Send(s *SendBody) (*Response, error) {
 
 	url := fcmURL
 	if s.Test {
-		url = "http://127.0.0.1:8080"
+		url = "http://127.0.0.1:0/fcm/send"
 	}
 	resp, err := a.sendRequest(url, marshalled)
 	if err != nil {
