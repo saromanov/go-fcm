@@ -1,6 +1,7 @@
 package fcm
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -20,8 +21,8 @@ func TestSend(t *testing.T) {
 	a := New("testKey")
 	assert.NotNil(t, a, "unable to create object")
 	_, err := a.Send(&SendBody{
-		Test: true,
-		To:   "test",
+		TestURL: s.URL,
+		To:      "test",
 		Data: map[string]string{
 			"foo": "bar",
 		},
@@ -33,7 +34,13 @@ func TestSend(t *testing.T) {
 func mockFCMServer() *httptest.Server {
 	router := chi.NewRouter()
 	router.Post("/fcm/send", func(w http.ResponseWriter, r *http.Request) {
-		s := `{}`
+		s := `{
+			"multicast_id":1,
+			"success":1,
+			"failure":0,
+			"results":[]
+		}`
+		fmt.Println("CATCH")
 		_, _ = w.Write([]byte(s))
 	})
 	return httptest.NewServer(router)

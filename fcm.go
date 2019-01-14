@@ -34,7 +34,7 @@ type SendBody struct {
 	TimeToLive            int    `json:"time_to_live,omitempty"`
 	RestrictedPackageName string `json:"restricted_package_name,omitempty"`
 	DryRun                bool   `json:"dry_run,omitempty"`
-	Test                  bool
+	TestURL               string `json:"-"`
 }
 
 // Response provides output data after sending to
@@ -73,8 +73,9 @@ func (a *App) Send(s *SendBody) (*Response, error) {
 	}
 
 	url := fcmURL
-	if s.Test {
-		url = "http://127.0.0.1:0/fcm/send"
+	if s.TestURL != "" {
+		url = s.TestURL + "/fcm/send"
+		fmt.Println(url)
 	}
 	resp, err := a.sendRequest(url, marshalled)
 	if err != nil {
