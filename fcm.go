@@ -74,8 +74,7 @@ func (a *App) Send(s *SendBody) (*Response, error) {
 
 	url := fcmURL
 	if s.TestURL != "" {
-		url = s.TestURL + "/fcm/send"
-		fmt.Println(url)
+		url = s.TestURL
 	}
 	resp, err := a.sendRequest(url, marshalled)
 	if err != nil {
