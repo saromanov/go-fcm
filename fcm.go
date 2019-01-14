@@ -34,6 +34,7 @@ type SendBody struct {
 	TimeToLive            int    `json:"time_to_live,omitempty"`
 	RestrictedPackageName string `json:"restricted_package_name,omitempty"`
 	DryRun                bool   `json:"dry_run,omitempty"`
+	Test                  bool
 }
 
 // Response provides output data after sending to
@@ -71,7 +72,11 @@ func (a *App) Send(s *SendBody) (*Response, error) {
 		return nil, fmt.Errorf("unable to marshal body: %v", err)
 	}
 
-	resp, err := a.sendRequest(marshalled)
+	url := fcmURL
+	if s.Test {
+		url = "http://127.0.0.1:8080"
+	}
+	resp, err := a.sendRequest(url, marshalled)
 	if err != nil {
 		return nil, fmt.Errorf("unable to send request: %v", err)
 	}
@@ -85,8 +90,8 @@ func (a *App) Send(s *SendBody) (*Response, error) {
 }
 
 // sending of POST HTTP request
-func (a *App) sendRequest(b []byte) (io.ReadCloser, error) {
-	req, err := http.NewRequest("POST", fcmURL, bytes.NewBuffer(b))
+func (a *App) sendRequest(url string, b []byte) (io.ReadCloser, error) {
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err
 	}

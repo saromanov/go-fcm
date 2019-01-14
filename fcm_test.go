@@ -17,13 +17,7 @@ func TestNew(t *testing.T) {
 func mockFCMServer() *httptest.Server {
 	router := chi.NewRouter()
 	router.Get("/fcm/send", func(w http.ResponseWriter, r *http.Request) {
-		s := `{"ok": true,
-				"result": {
-					"first_name": "comments_test",
-					"id": 707381019,
-					"is_bot": true,
-					"username": "remark42_test_bot"
-				}}`
+		s := `{}`
 		_, _ = w.Write([]byte(s))
 	})
 	return httptest.NewServer(router)
